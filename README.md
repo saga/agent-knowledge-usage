@@ -6,6 +6,8 @@
 
 - [Agent Knowledge & Capability Roadmap](./AGENT-KNOWLEDGE-ROADMAP.md)
 - [Reference Index](./reference/README.md)
+- [Academic Papers（56篇）](./学术论文/README.md)
+- [Industry Practice](./业界实践/README.md)
 
 ## Core question
 
