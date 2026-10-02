@@ -1,6 +1,6 @@
 ---
 name: industry-practice-research
-description: 研究 Snowflake、Databricks、Google、OpenAI、Anthropic 及其他厂商如何抽象、保存、检索、使用和治理企业业务知识与 Agent Knowledge。当用户要求业界实践、大厂怎么做或厂商对比时使用。
+description: 研究云厂商、企业软件厂商、Agent/AI 平台厂商和大型互联网公司如何抽象、保存、检索、使用和治理企业业务知识与 Agent Knowledge。当用户要求业界实践、大厂怎么做或厂商对比时使用。
 metadata:
   kind: capability
 ---
@@ -22,14 +22,114 @@ Agent 怎么获取？
 
 ## 研究对象
 
-优先：
-- Snowflake
-- Databricks
-- Google Cloud
-- OpenAI
-- Anthropic
+### 不允许固定厂商白名单
 
-需要时增加其他有明确 enterprise knowledge / agent architecture 的公司。
+研究对象不能长期固定成 Snowflake、Databricks、Google、OpenAI、Anthropic 五家。
+
+这五家可以作为初始 seed，但**每次新的业界研究都必须做 vendor expansion**。研究结果如果连续多次只来自同一批厂商，说明研究偏倚，需要主动补充新的厂商、不同产品类别或不同架构路线。
+
+### Vendor Expansion 的最小规则
+
+每次涉及“业界、大厂、企业实践、行业趋势、怎么做”的研究：
+
+1. 先从当前已有厂商集合之外寻找候选；
+2. 至少覆盖 **3 个新增厂商或新厂商类别**，除非问题本身明显只涉及某一特定生态；
+3. 优先选择不同的架构路线，而不是只增加同类 SaaS 产品；
+4. 至少包含一种：
+   - Cloud / infrastructure vendor；
+   - Enterprise application / business platform vendor；
+   - Data / AI platform vendor；
+   - 或大型互联网 / AI infrastructure vendor；
+5. 已有厂商如果已经能充分回答问题，可以保留，但不能让它们占据全部 primary evidence；
+6. 对“行业共同模式”的结论，优先要求来自不同厂商类别，而不是同一生态中的多个产品。
+
+### 候选厂商池只作为搜索起点，不是白名单
+
+可以考虑但不应机械遍历：
+
+- AWS
+- Microsoft
+- IBM
+- Oracle
+- Salesforce
+- ServiceNow
+- SAP
+- Palantir
+- NVIDIA
+- Alibaba Cloud
+- Tencent
+- 百度
+- Adobe
+- Cisco
+- Workday
+- Atlassian
+- Cloudflare
+- Cohere
+- Mistral
+- Meta
+- 其他在目标问题上有正式产品、公开 architecture、source code、customer engineering 或 research evidence 的公司
+
+是否纳入，以**问题相关性 + 一手证据质量**决定，而不是“公司名气”。
+
+## Vendor Discovery Protocol
+
+每次研究开始前记录：
+
+~~~text
+Seed Vendors:
+Existing Vendors:
+New Vendor Candidates:
+Selected New Vendors:
+Why Selected:
+Excluded Candidates:
+Why Excluded:
+Architecture Diversity:
+Evidence Diversity:
+~~~
+
+### 候选厂商怎么找
+
+优先按“架构问题”搜索，而不是直接搜索“某某公司 knowledge”。
+
+例如研究 Agent Knowledge 时，不只搜：
+
+~~~text
+OpenAI knowledge
+Anthropic knowledge
+Google agent knowledge
+~~~
+
+还要搜：
+
+~~~text
+enterprise agent knowledge graph
+agent semantic layer
+agent memory service
+enterprise grounding permissions
+agent ontology
+agentic retrieval
+AI search enterprise permissions
+agent knowledge lifecycle
+business semantics for agents
+agent governance knowledge access
+~~~
+
+然后从结果中反向发现新的厂商。
+
+### Vendor Diversity Check
+
+在正式形成 cross-vendor conclusion 前，检查：
+
+| Dimension | Requirement |
+|---|---|
+| Vendor count | 至少 5 家，除非研究问题很窄 |
+| New vendors | 至少 3 家不是上一轮固定集合 |
+| Vendor categories | 至少 2 类 |
+| Primary sources | 尽可能直接来自 vendor / source code |
+| Architecture diversity | 不要全部来自同一种平台模型 |
+| Counterexamples | 至少主动寻找 1 个反例或明显不同路线 |
+
+如果达不到，不要把结论写成“行业普遍”。
 
 ## 每家公司统一拆成七个问题
 
@@ -79,6 +179,16 @@ Agent 如何获得？
 优先使用官方 docs、官方技术博客、官方 architecture / API docs、官方 source code。
 
 新闻和普通博客主要用于发现线索。
+
+同时记录：
+
+- source family
+- publication / update date
+- product version
+- GA / Preview
+- whether evidence is product, architecture, adoption, experiment, or independent observation
+
+不要因为不同网页都引用同一个官方公告，就把它们当作独立来源。
 
 ## 横向比较
 
@@ -242,6 +352,7 @@ same underlying database
 same benchmark
 same consulting pattern
 same source article
+same parent company / ecosystem
 ~~~
 
 这些都可能制造假独立性。
@@ -335,7 +446,40 @@ Level 5 是 synthesis，不是 industry fact。
 
 很多“厂商冲突”最后是条件不同，而不是一个一定正确、另一个一定错误。
 
-## 8J. 最终必须回答三个问题
+## 8J. Vendor Expansion Review
+
+完成初轮研究后必须回看：
+
+~~~text
+Did we only study our usual vendors?
+        ↓
+Did we include at least 3 new vendors?
+        ↓
+Did we include at least 2 vendor categories?
+        ↓
+Did we search for an incompatible / alternative architecture?
+        ↓
+Did any new vendor change the candidate primitive?
+~~~
+
+如果最后一个答案是“是”，必须在 synthesis 中明确写出这个变化。
+
+如果前三项做不到，必须记录原因，而不是默认为“无关”。
+
+## 8K. 防止“固定大厂偏见”
+
+以下模式视为研究质量问题：
+
+- 连续多次只引用同一 3–5 家厂商；
+- 先决定抽象，再只寻找支持它的厂商；
+- 只研究 AI model vendors，不研究 enterprise software vendors；
+- 只研究 cloud vendors，不研究 application/data vendors；
+- 只看官方 feature，不看 architecture / customer engineering；
+- 把同一生态中的多个产品当成独立行业证据。
+
+发现这些情况时，应主动扩展研究集合或降低结论强度。
+
+## 8L. 最终必须回答三个问题
 
 ### What is common?
 
@@ -351,7 +495,7 @@ Level 5 是 synthesis，不是 industry fact。
 
 ## 19. 确定性校验脚本
 
-OpenAI 的 Skills 规范允许 Skill 目录包含 scripts，并把它用于 repeatable actions；但真正执行脚本仍依赖具体 agent runtime 是否提供 shell / sandbox。因此脚本是质量闸门，不是唯一执行路径。citeturn716049search2turn716049search5
+OpenAI 的 Skills 规范允许 Skill 目录包含 scripts，并把它用于 repeatable actions；但真正执行脚本仍依赖具体 agent runtime 是否提供 shell / sandbox。因此脚本是质量闸门，不是唯一执行路径。
 
 有 shell / sandbox 时优先运行：
 
@@ -399,6 +543,7 @@ Real Differences
 Evidence Gaps
 Candidate Primitives
 Open Questions
+Vendor Expansion Log
 ~~~
 
 这样一次厂商研究才能直接反馈到当前 Agent Knowledge / Common Agent Library 的架构讨论。
