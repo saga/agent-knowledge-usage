@@ -409,3 +409,79 @@ External Cognitive Infrastructure 包括：
 Knowledge、Ontology、RAG、Graph、Memory、Skills、Tools、State、Planning、Protocols、Context、Evidence、Policy、Evaluation。
 
 长期真正值得建设的不是“又一个 Agent Framework”，而是一套让不同 Agent 应用共享知识、语义、记忆、能力、状态、工具、证据与治理能力的基础设施。
+
+## 17. 研究后的几个新判断
+
+前面论文与厂商实践放在一起后，Roadmap 的主线已经更清楚：重点不是继续增加 Agent 组件，而是把不同种类的信息放到正确的位置。
+
+### Knowledge 不是一种表示
+
+同一份业务知识可以同时存在为原始文档、semantic object、claim / proposition、graph、summary 和 retrieval index。
+
+它们之间应该是派生关系，而不是互相竞争的 source of truth。
+
+~~~text
+Canonical Source
+      ↓
+Knowledge Representation
+      ↓
+Derived Views
+      ↓
+Retrieval / Navigation
+      ↓
+Context
+~~~
+
+真正需要长期保存的是 source、provenance、version、authority 和 scope。
+
+### Context 不是 Knowledge Storage
+
+Knowledge 可以很大，Context 必须小而有目的。
+
+模型当前看到的内容应该是 Knowledge、Memory、Skill、State、Tool Result、Evidence 经过选择后的投影，而不是所有长期资料的简单拼接。
+
+### Memory 不应该变成第二个 Knowledge Base
+
+Knowledge 主要保存领域和世界的长期事实、定义、关系与规则。
+
+Memory 主要保存 Agent、用户、团队过去发生的事情和经验。
+
+如果 Memory 与 Business State 冲突，业务系统应该是权威来源。
+
+### Semantic Layer 是企业 Agent 的关键分界
+
+通用 Agent 可以搜索到 Revenue 相关文档。
+
+企业 Agent 还需要知道 Revenue 的正式定义、计算方式、时间口径、权威来源和适用范围。
+
+因此金融、数据、合规类 Agent 的长期核心，很可能不是更大的 RAG，而是可靠的 Business Semantic Layer。
+
+### 自动发现需要一个验证层
+
+Databricks inferred context、Google enrichment、LLM Wiki 等方向都说明人工维护全部 Knowledge 不现实。
+
+但自动抽取的结果不能直接成为真相。
+
+更稳妥的流程是：
+
+~~~text
+Source
+  ↓
+Candidate Knowledge
+  ↓
+Extract / Infer
+  ↓
+Validate
+  ↓
+Assign Authority
+  ↓
+Publish
+~~~
+
+这也意味着下一阶段值得研究的对象不只是 Knowledge Retrieval，还有 Knowledge Compilation 和 Knowledge Governance。
+
+### 下一步最值得研究的三个问题
+
+1. 自动发现出来的 business knowledge 怎样经过验证后成为 trusted knowledge。
+2. Agent 做决定时，怎样记录它使用的 semantic definition、document、policy 和 permission snapshot。
+3. 怎样建立真正的 Knowledge Use Evaluation，而不是只测 retrieval recall 和最终答案。
