@@ -42,6 +42,7 @@ def citation_ids(text: str) -> list[str]:
     return CITE_RE.findall(text)
 
 def source_section_lines(lines: list[str]) -> tuple[int | None, int]:
+
     start = None
     for i, line in enumerate(lines):
         if re.match(r"^#{1,6}\s+(sources|参考资料|来源|references)\s*$", line, re.I):
@@ -50,6 +51,18 @@ def source_section_lines(lines: list[str]) -> tuple[int | None, int]:
     if start is None:
         return None, len(lines)
     return start, len(lines)
+
+def source_ids_in_sources(lines: list[str], start: int | None) -> list[str]:
+    if start is None:
+        return []
+    ids: list[str] = []
+    for line in lines[start + 1:]:
+        if re.match(r"^#{1,6}\s+", line):
+            break
+        match = re.search(r"\[(S\d+|R\d+|REF\d+)\]", line)
+        if match:
+            ids.append(match.group(1))
+    return ids
 
 def audit(path: Path, strict: bool) -> dict:
     text = path.read_text(encoding="utf-8")
@@ -72,6 +85,17 @@ def audit(path: Path, strict: bool) -> dict:
     if sources_start is None and (all_urls or cites):
         warnings.append("no explicit Sources/References section detected")
 
+    cited_ids = sorted({item.strip("[]") for item in cites})
+    registered_ids = source_ids_in_sources(lines, sources_start)
+    registered_set = set(registered_ids)
+    if cites and sources_start is not None:
+        missing_ids = sorted(set(cited_ids) - registered_set)
+        duplicate_ids = sorted({item for item in registered_ids if registered_ids.count(item) > 1})
+        if missing_ids:
+            errors.append("citation IDs missing from Sources section: " + ", ".join(missing_ids))
+        if duplicate_ids:
+            errors.append("duplicate source IDs in Sources section: " + ", ".join(duplicate_ids))
+
     for idx, line in enumerate(lines, 1):
         if STRONG_RE.search(line):
             findings.append({
@@ -80,10 +104,12 @@ def audit(path: Path, strict: bool) -> dict:
                 "text": line.strip(),
             })
 
-        if NUMBER_RE.search(line) and (URL_RE.search(line) is None and not CITE_RE.search(line)):
+        is_date_line = bool(re.search(r"(研究日期|accessed|published|updated|cutoff)", line, re.I))
+        if NUMBER_RE.search(line) and not is_date_line and (URL_RE.search(line) is None and not CITE_RE.search(line)):
             warnings.append(f"numeric claim without obvious citation on line {idx}")
 
-        if FRESHNESS_RE.search(line) and URL_RE.search(line) is None and not CITE_RE.search(line):
+        is_date_line = bool(re.search(r"(研究日期|accessed|published|updated|cutoff)", line, re.I))
+        if FRESHNESS_RE.search(line) and not is_date_line and URL_RE.search(line) is None and not CITE_RE.search(line):
             warnings.append(f"freshness-sensitive wording without obvious citation on line {idx}")
 
         for name, pattern in BOUNDARY_PATTERNS.items():
@@ -108,6 +134,7 @@ def audit(path: Path, strict: bool) -> dict:
         "warnings": warnings,
         "citation_count": len(cites),
         "citation_ids": sorted(set(cites)),
+        "registered_source_ids": sorted(set(registered_ids)),
         "url_count": len(all_urls),
         "unique_url_count": len(set(all_urls)),
         "findings": findings,
