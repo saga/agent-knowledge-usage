@@ -1,199 +1,201 @@
-# Google：Knowledge Catalog + Semantic Layer + RAG / Agent Search
+# Google：从 Data Catalog 走向面向 Agent 的 Context Engine
 
 研究日期：2026-10-02
 
-## 1. 核心路线
+## 先看结论
 
-Google Cloud 当前的方向非常明确：从传统 Data Catalog 走向面向 Agent 的“universal context engine”。
+Google Cloud 当前的路线不是再做一个更强的文档搜索，而是把传统 Data Catalog 往 enterprise context engine 推。
 
-Google Cloud 在 2026 年推出 Knowledge Catalog，并把传统数据目录的目标从“告诉人表是什么”提升到给 Agent 提供 enterprise business semantics、relationships 和 trusted context。
+传统 catalog 解决：“这张表是什么？”
 
+Agent 需要的是：“这个数据在业务上是什么意思、和什么有关、哪个定义可信、谁能用、怎样把它和其他知识放在一起？”
+
+2026 年推出的 Knowledge Catalog 正沿着这个方向组合 metadata、semantic models、business context、relationships、data products 和搜索。
+
+官方资料：
 - https://cloud.google.com/blog/products/data-analytics/introducing-the-google-cloud-knowledge-catalog
 - https://cloud.google.com/blog/products/data-analytics/unveiling-new-bigquery-capabilities-for-the-agentic-era
+- https://cloud.google.com/blog/topics/google-cloud-next/google-cloud-next-2026-wrap-up
+- https://cloud.google.com/products/gemini-enterprise-agent-platform/agent-search
 
-## 2. Knowledge Catalog 的定位
+## 1. 为什么传统 Data Catalog 不够
 
-传统 catalog 通常偏技术 metadata：
+传统 catalog 更偏技术 metadata：table、column、schema、owner、description。
 
-```text
-table
-column
-schema
-owner
-```
+这些对 Agent 有用，但不足以支持真正的业务推理。Agent 还需要 business meaning、relationships、trusted definitions、quality、lineage、intent、usage context 和 governance。
 
-而 Agent 需要：
+所以 Google 开始把 catalog 的角色从“资产目录”变成“上下文基础设施”。
 
-```text
-business meaning
-relationships
-trusted definitions
-data quality
-lineage
-business context
-```
+## 2. Google 的 Knowledge 不是一个对象
 
-因此 Google 把 Knowledge Catalog 定位为企业 context engine：
+当前体系大致由几层组成。
 
-```text
-Enterprise Data / Metadata
-       ↓
-Knowledge Catalog
-       ↓
-Context for Agents
-```
+### Looker / semantic layer
 
-## 3. Google 的 Knowledge 不是单一对象
+LookML 表达 business semantics。
 
-Google 的业务知识分散在多个互相组合的层次。
+### BigQuery measures / business logic
 
-### A. Semantic Layer
+业务计算定义进入数据分析层。
 
-Looker / LookML 提供成熟的 business semantics。Google 在 2026 Next 中宣布 LookML Agent 可以读取 strategy documents、spreadsheets、reports 并生成 business-ready semantics，使 Agent 和分析师使用相同的企业定义。
+### Knowledge Catalog
 
-https://cloud.google.com/blog/topics/google-cloud-next/google-cloud-next-2026-wrap-up
+聚合企业 metadata 和 business context。
 
-### B. BigQuery Measures / Business Logic
+### Agent Search / RAG Engine
 
-Google 正在把 programmatic business logic 直接嵌入 SQL / analytics layer，使 metrics 成为可复用、准确和受治理的计算定义。
+处理文档、网站和非结构化知识。
 
-### C. Knowledge Catalog
+### Data Products
 
-统一 enterprise metadata、business context 和跨平台 context。
+把 intent、SLA、governance constraints 等和数据资产一起组织起来。
 
-### D. RAG / Agent Search
+整体更接近：
 
-对于 documents、websites、unstructured data，Google 提供 Agent Search + RAG Engine。
-
-### E. Data Products
-
-Data Products 可以把 intent、SLA、governance constraints 与 data asset 一起封装。
-
-因此 Google 的总体模型接近：
-
-```text
-Business Semantics
-      +
-Metadata
-      +
+~~~text
+Semantic Layer
++
+Catalog
++
 Data Products
-      +
++
 Structured Data
-      +
-Unstructured Knowledge
++
+Unstructured Search
       ↓
-Knowledge / Context Layer
+Context Layer
       ↓
-Gemini Agents
-```
+Agent
+~~~
 
-## 4. RAG Engine：非结构化知识
+## 3. Knowledge Catalog 的三件事
 
-Google 的 RAG Engine 将 RAG 明确拆成 ingestion、transformation、chunking、embedding、indexing、retrieval、generation。
+### Aggregation
 
-https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview
+从不同平台把 metadata、semantic assets 和 context 汇聚起来。
 
-Agent Search 还可以作为 RAG Engine backend，统一大规模企业搜索与 grounding。
+### Enrichment
 
-https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/use-vertexai-search
+从已有资产和非结构化内容中补充 entity relationships、business glossary、自然语言描述和 verified SQL patterns。
 
-因此 Google 不试图让一个 semantic model 承担所有知识，而是把：
+### Search
 
-```text
-semantic layer
-      +
-search / retrieval
-      +
-agent
-```
+让这些 context 可以被 Agent 发现和使用。
 
-组合起来。
+因此：
 
-## 5. Agent Search
+~~~text
+Collect
+  ↓
+Understand
+  ↓
+Find
+~~~
 
-Agent Search 是 Google-quality information retrieval capability，可以处理 website data、structured data、unstructured data，并直接作为 grounding backend。
+三个阶段缺一不可。
 
-https://cloud.google.com/products/gemini-enterprise-agent-platform/agent-search
+## 4. Data Product 为什么值得关注
 
-## 6. Google 当前最值得关注的一点：Context Engine
+传统数据资产常常只有 dataset + owner。
 
-Knowledge Catalog 的意义在于：Knowledge 不再等于 search index。
+Agent 真正需要的可能是：
 
-它开始包含：
-
-```text
-metadata
-semantic models
-business definitions
-relationships
-data products
-governance
+~~~text
+data
++
+intent
++
+semantic definition
++
 quality
-provenance
-```
++
+SLA
++
+lineage
++
+entitlement
++
+usage contract
+~~~
 
-也就是：
+这意味着一个 Data Product 最终可以成为 Agent Knowledge Asset。
 
-> Context 是经过治理和语义化的数据资产，而不是简单检索结果。
+Agent 不只是知道“这张表有什么”，还知道它适合回答什么问题、多久更新、有什么限制、谁可以使用。
 
-## 7. Agent 如何使用
+## 5. RAG Engine 为什么仍然存在
 
-```text
-User Task
-   ↓
-Gemini Agent
-   ↓
-Context / Knowledge Layer
-   ├── Knowledge Catalog
-   ├── Looker semantics
-   ├── BigQuery
-   ├── Agent Search
-   ├── RAG Engine
-   └── enterprise sources
-   ↓
-Reasoning / Grounding
-   ↓
-Tool / Action
-```
+Knowledge Catalog 不能替代文档检索。
 
-这明显比“query → vector search → prompt”更接近 enterprise Agent platform。
+RAG Engine 主要处理 ingestion、transformation、chunking、embedding、indexing、retrieval、generation。
 
-## 8. 对你当前架构的启发
+semantic/catalog layer 处理 meaning、relation、trust、governance。
 
-### 8.1 Knowledge Layer 最终可能应该是 Context Engine
+所以两者应该组合：
 
-可以把：
-
-```text
-Knowledge
-+ Semantic Layer
-+ Memory
-+ Metadata
-+ Governance
-```
-
-统一理解为 Context Infrastructure。
-
-### 8.2 Business Semantics 与 RAG 应分层
-
-不要让 embedding system 解决 metrics、business definitions、entity relationships 和 documents 的所有问题。
-
-应该：
-
-```text
-Semantic Knowledge
-       +
-Retrieval Knowledge
-       +
-Runtime State
-       ↓
+~~~text
+Business Semantics
++
+Retrieval
++
+Governed Assets
+      ↓
 Context Assembly
-```
+      ↓
+Agent
+~~~
 
-### 8.3 Data Product 可能成为 Agent Knowledge Asset
+## 6. Context Engine 是真正值得抽象的词
 
-未来一个 Data Product 不只是“表 + owner”，还可能包括 intent、semantic definition、quality、SLA、lineage、entitlement 和 agent usage contract。
+一个 Agent 当前真正需要的可能是 metric definition、customer entity、policy paragraph、data asset、lineage、current state 和 permission。
+
+它们的存储方式完全不同，但最终都会进入同一个 reasoning context。
+
+因此：
+
+> Knowledge Layer 管理长期知识；Context Layer 负责这一轮真正给模型看的知识投影。
+
+两个层最好不要合并。
+
+## 7. 最难的问题其实是冲突解决
+
+统一 context engine 最难的不是搜索，而是不同来源冲突时谁赢。
+
+例如 Finance 把 Revenue 定义为 X，Sales dashboard 用 Y，历史报告写 Z。
+
+如果没有 authority、scope、effective time，统一搜索只会把三个答案一起交给模型。
+
+所以仍然需要 Source、Authority、Scope、Effective Time 和 Permission。
+
+搜索不是治理。
+
+## 8. 对当前项目
+
+当前项目可以抽取：
+
+~~~text
+Canonical Knowledge
++
+Semantic Layer
++
+Data Products
++
+Search / Retrieval
++
+Memory
++
+State
++
+Permission
+      ↓
+Context Assembly
+      ↓
+Agent
+~~~
+
+不需要复制 Google API。真正要借鉴的是它把数据目录、业务语义、检索和 Agent context 放到了一条完整链上。
 
 ## 9. 局限
 
-Google 的体系很强，但明显具有 cloud platform shaped 的特点。对 Common Agent Library，应该学习它的 Context Layer、semantic layer、governed data product、search / RAG separation，而不是复制 Google-specific API。
+Google 的方案明显带有 Google Cloud ecosystem 的形状。
+
+Common Agent Library 更应该学习 semantic layer、context aggregation、governed data product、search / RAG separation 和 source authority，而不是复制 cloud-specific API。
