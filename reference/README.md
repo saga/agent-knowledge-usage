@@ -36,6 +36,10 @@ Snowflake → Google Open Knowledge Format → LLM Wiki → Graph → Semantic L
 - [Snowflake Ontology / Knowledge Graph / Semantic Layer](./snowflake-ontology-knowledge-graphs-semantic-layer.md)：具体的 ontology metadata + generated view 实现模式。
 - [Scaling LLM Wiki with a Graph](./neo4j-scaling-karpathy-llm-wiki-graph.md)：讨论关系导航为什么不能只靠相似度检索。
 
+## Knowledge Fidelity / Tacit Knowledge
+
+- [Dark Knowledge 与 Tacit Knowledge](./dark-knowledge-and-tacit-knowledge.md)：说明为什么“正确答案”不等于完整知识，以及为什么知识保真度需要加入 soft structure、uncertainty、behavior 和 tacit know-how。
+
 ## Agent Cognition / Skills / Memory
 
 - [ReAct - ICLR 2023](./react-2023.md)：reasoning 与 acting 的基本循环。
