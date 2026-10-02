@@ -1,61 +1,119 @@
-# Open Knowledge Format (OKF)
+# Open Knowledge Format（OKF）
 
-Source: https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing
+来源：https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing  
+发布时间：2026-06-12
 
-Published: 2026-06-12
+## OKF 解决的是“知识怎么携带”而不是“知识怎么理解”
 
-## Core proposal
+Google Cloud 提出的 Open Knowledge Format 很简单：
 
-Google Cloud introduced Open Knowledge Format (OKF) v0.1 as a vendor-neutral, human- and agent-friendly representation for portable knowledge.
+~~~text
+directory
+ ├── Markdown files
+ ├── YAML frontmatter
+ └── Markdown links
+~~~
 
-The published shape is deliberately simple:
+它希望让 dataset、table、metric、playbook、runbook、API 等知识对象有一个人和 Agent 都能读的交换形式。
 
-directory → Markdown files → YAML frontmatter → normal Markdown links
+关键点不在格式有多复杂，而在于：
 
-The format can represent concepts such as datasets, tables, metrics, playbooks, runbooks and APIs.
+> Knowledge Asset 可以有一个独立于数据库、模型和 Agent Framework 的 portable representation。
 
-## Design principles
+## 为什么这个方向重要
 
-### Minimally opinionated
+如果知识只能存在于：
 
-The interoperability surface is intentionally small. A concept needs a type, while producers can choose domain-specific fields and Markdown sections.
+- 某个 vector database；
+- 某个 catalog；
+- 某个 proprietary agent platform；
 
-### Producer / consumer independence
+那么 Agent 更换框架时，知识也被绑定住了。
 
-A human, metadata pipeline or one LLM can produce the files and another tool or agent can consume them.
+OKF 的思路是先有一个可版本控制的 Knowledge Asset，再让：
 
-### Format, not platform
+~~~text
+Search
+Graph
+Semantic Layer
+Agent
+~~~
 
-The format is not tied to a database, cloud, model provider or agent framework.
+分别消费它。
 
-## Why this matters
+这和软件工程中“源代码与编译器分离”很像。
 
-OKF treats knowledge portability as a representation problem rather than as a requirement for another centralized knowledge service.
+## 它最适合什么
 
-That is relevant to:
+例如：
 
-- Common Agent Library;
-- version-controlled team knowledge;
-- enterprise metadata;
-- data semantics;
-- cross-agent knowledge exchange.
+~~~text
+knowledge/
+  finance/
+    revenue.md
+    customer.md
+  operations/
+    incident-runbook.md
+  data/
+    revenue-metric.md
+~~~
 
-## Important limitation
+同一个 Knowledge Asset 可以被：
 
-OKF is a representation / interchange format. It does not itself solve:
+- 人直接阅读；
+- Git 版本控制；
+- pipeline 生成；
+- Agent 检索；
+- Graph indexing；
+- semantic ingestion。
 
-- semantic correctness;
-- ontology alignment;
-- freshness;
-- contradiction resolution;
-- retrieval;
-- authorization;
-- policy enforcement.
+这使“知识 portability”成为一个独立架构问题。
 
-Therefore it fits best as a portable knowledge interchange layer inside a larger Knowledge Architecture.
+## 但 OKF 本身非常有限
 
-## Relation to the roadmap
+格式不会自动解决：
 
-The most important idea for the roadmap is:
+### Semantic correctness
+Markdown 写错了仍然是错的。
 
-> The durable boundary can be a portable Knowledge Asset format, while retrieval and runtime infrastructure remain replaceable.
+### Ontology alignment
+两个团队都定义 Revenue，不代表它们指的是同一个东西。
+
+### Freshness
+Git 里有文件，不代表它现在仍有效。
+
+### Authorization
+文件存在，不代表每个人都有权限看。
+
+### Conflict
+多个文件可能互相矛盾。
+
+### Retrieval
+文件格式本身不负责搜索。
+
+所以：
+
+> OKF 是 interchange layer，不是 knowledge platform。
+
+## 对当前项目的价值
+
+这启发 Common Agent Library 保留一个与具体 backend 无关的 Knowledge Asset contract。
+
+可以考虑：
+
+~~~text
+Knowledge Asset
+├── id
+├── type
+├── metadata
+├── content
+├── links
+├── source
+├── version
+├── validTime
+└── authority
+~~~
+
+上面可以有 Markdown / YAML / JSON / database object 等不同 representation。
+
+真正长期稳定的应该是语义契约，而不是某个数据库 schema。
