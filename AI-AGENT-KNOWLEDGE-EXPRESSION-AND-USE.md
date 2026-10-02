@@ -1534,7 +1534,7 @@ LLM Weights
 
 没有一个单独的 primitive 能解决整个 Knowledge Fidelity Chain。
 
-### 第七，Dark Knowledge 和 Tacit Knowledge 说明“知识”比答案大得多
+### 第六，Dark Knowledge 和 Tacit Knowledge 说明“知识”比答案大得多
 
 Dark Knowledge 提醒我们，模型的 rich predictive structure 不会全部出现在 top answer 中；Tacit Knowledge 又提醒我们，某些 know-how 甚至很难完全转换成 propositions。
 
@@ -1567,7 +1567,7 @@ Latent / Tacit Structure
 
 ---
 
-### 第六，Agent Knowledge 真正缺的不是另一个 Knowledge Base
+### 第七，Agent Knowledge 真正缺的不是另一个 Knowledge Base
 
 更可能缺的是：
 
