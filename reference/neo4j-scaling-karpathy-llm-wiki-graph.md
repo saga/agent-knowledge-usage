@@ -1,68 +1,131 @@
-# Scaling Karpathy's LLM Wiki: Why Your Knowledge Base Needs a Graph
+# Scaling Karpathy's LLM Wiki：为什么大规模知识库需要关系导航
 
-Source: https://neo4j.com/blog/agentic-ai/scaling-karpathy-llm-wiki-graph/
+来源：https://neo4j.com/blog/agentic-ai/scaling-karpathy-llm-wiki-graph/  
+发布时间：2026-08-31
 
-Published: 2026-08-31
+## 它观察到的问题
 
-## Main thesis
+一个小型 LLM Wiki 用文件夹和 Markdown links 就很好用。
 
-The article argues that Karpathy-style LLM Wiki knowledge bases become harder to search and navigate as the Markdown corpus grows. The proposed answer is a graph index over the Wiki.
+但规模变大以后，问题从“有没有内容”变成：
 
-The useful distinction is:
+> Agent 怎样知道下一步应该沿哪条关系继续看？
 
-folder of Markdown → graph index → structured navigation
+文章提出 Graph Index：
 
-## Graph model
+~~~text
+Markdown knowledge
+      ↓
+graph index
+      ↓
+navigation
+~~~
 
-The article models:
+图的对象可以包括 Vault、Folder、Document、Section，关系包括 containment、reading order 和 cross-document links。
 
-- Vault
-- Folder
-- Document
-- Section
+## 为什么 Graph 在这里不是数据库替代品
 
-with relationships for:
+最有用的理解不是：
 
-- containment;
-- section reading order;
-- cross-document links.
+> Graph 比 Vector DB 好。
 
-The graph enables:
+而是：
 
-- hierarchy traversal;
-- multi-hop navigation;
-- shortest paths;
-- centrality;
-- community detection.
+> Vector Search 找候选，Graph 提供结构导航。
+
+例如用户问：
+
+> 这个系统为什么这样设计？
+
+vector retrieval 可能找到一篇相关文档。
+
+graph navigation 可以进一步沿着：
+
+~~~text
+system
+ → component
+ → decision
+ → referenced ADR
+ → dependency
+ → source
+~~~
+
+进入证据链。
 
 ## Progressive disclosure
 
-A notable pattern is:
+一个实用模式是：
 
-outline → search → get → follow links
+~~~text
+outline
+  ↓
+search
+  ↓
+get
+  ↓
+follow links
+~~~
 
-Instead of dumping the whole knowledge base into context, the agent first sees a compact map and then progressively opens only the relevant subtree.
+这和 Context Engineering 很接近。
 
-This is directly relevant to context engineering.
+Agent 先拿地图，再打开局部内容，而不是把整座知识库塞进 context。
 
-## Reported benchmark claim
+## 文章中的 benchmark 应该怎么理解
 
-The article reports a Newcastle University / NICD comparison where a graph-enabled agent reportedly achieved more than 2× precision and recall for factual correctness, +80% truthfulness and +69% answer relevancy over a vector-only setup in the described experiment.
+文章报告了图增强方案在其描述的实验中对事实正确性、precision、recall 等指标的提升。
 
-These are claims reported by the article and should be verified against the underlying experiment before being used as general evidence.
+这些结果应视为特定实验中的 evidence，而不是“Graph 一定优于 Vector”的普遍结论。
 
-## Strategic interpretation
+真正值得保留的是架构观察：
 
-The strongest idea is not “everyone should use Neo4j”.
+> 当知识之间的关系本身就是问题的一部分时，关系导航比单纯相似度检索多了一条信息通道。
 
-It is:
+## Graph 的代价
 
-> Relationships should become first-class navigable state.
+Graph 不是免费能力。
 
-A summary can remain a pointer:
+必须额外处理：
 
-summary → section → source
+- node / edge extraction；
+- entity resolution；
+- relationship quality；
+- stale edges；
+- schema evolution；
+- graph growth；
+- traversal explosion。
 
-rather than becoming a lossy replacement for the source.
+尤其是自动抽取关系时，图会把错误关系持久化。
 
-This directly supports the agent-knowledge-usage principle that derived views should remain recoverable to canonical evidence.
+所以：
+
+~~~text
+Graph
+  ≠
+authority
+~~~
+
+仍然必须能追溯到 canonical source。
+
+## 对当前项目
+
+这里值得抽取的是一个接口思想：
+
+~~~text
+Search
+  +
+Navigate
+  +
+Open Evidence
+~~~
+
+而不是把 Graph DB 作为 Common Agent Library 的强依赖。
+
+未来具体实现可以是：
+
+- Graph DB；
+- SQL relationships；
+- static links；
+- knowledge pages；
+- semantic layer relationships。
+
+上层 Agent 不需要知道具体存储。
