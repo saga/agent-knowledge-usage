@@ -10,11 +10,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-URL_RE = re.compile(r"https?://[^\s)\]>"']+")
+URL_RE = re.compile(r'https?://[^\s)\]>"\']+')
 CITE_RE = re.compile(r"\[(?:S|R|REF)?\d+\]")
 STRONG_RE = re.compile(
     r"(必须|一定|永远|绝对|唯一|只能|所有|任何|业界标准|最佳实践|普遍|"
