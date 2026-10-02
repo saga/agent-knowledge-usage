@@ -21,6 +21,12 @@ STRONG_RE = re.compile(
 )
 DATE_RE = re.compile(r"(研究日期|research cutoff|cutoff|202\d-\d\d-\d\d)", re.IGNORECASE)
 
+MATRIX_GROUPS = {
+    "capability_matrix": ["capability matrix", "能力矩阵"],
+    "architecture_matrix": ["architecture matrix", "架构矩阵"],
+    "lifecycle_matrix": ["lifecycle matrix", "生命周期矩阵"],
+}
+
 CORE_GROUPS = {
     "problem_or_conclusion": ["结论", "problem", "business meaning"],
     "abstraction": ["抽象", "abstraction", "semantic", "ontology"],
@@ -55,6 +61,8 @@ def check_one(path: Path, strict: bool) -> dict:
     checks["has_research_date_or_cutoff"] = bool(DATE_RE.search(text))
     checks["has_sources"] = any(any(term in h for term in CORE_GROUPS["sources"]) for h in headings)
     checks["has_limitations"] = any(any(term in h for term in CORE_GROUPS["limitations"]) for h in headings)
+    for name, terms in MATRIX_GROUPS.items():
+        checks[f"has_{name}"] = any(any(term in h for term in terms) for h in headings)
 
     for name, terms in CORE_GROUPS.items():
         if name in {"problem_or_conclusion", "sources", "limitations"}:
@@ -71,6 +79,9 @@ def check_one(path: Path, strict: bool) -> dict:
         warnings.append("missing explicit limitations/boundary section")
 
     for key in (
+        "has_capability_matrix",
+        "has_architecture_matrix",
+        "has_lifecycle_matrix",
         "has_abstraction",
         "has_representation",
         "has_retrieval",
