@@ -1,11 +1,38 @@
 ---
 name: academic-literature-review
-description: 系统搜索、筛选、分类和整理 AI Agent 与 LLM Knowledge 相关学术论文。当用户要求论文、文献综述、研究方向、论文地图或批量下载时使用。
+description: 进行论文综述、论文筛选、证据地图和研究演化分析。当用户要求找论文、比较论文、梳理研究路线、寻找研究空白、追踪最新研究，或需要系统整理论文证据时使用；不要只输出搜索结果列表。
 metadata:
   kind: capability
 ---
 
 # Academic Literature Review
+
+## Skill Operating Contract
+
+### Start with
+- Research question
+- Scope / population / task
+- Time cutoff
+- Review mode
+- Completion criteria
+
+### Execute
+1. Build the corpus from seed papers.
+2. Expand backward / forward / related / recent.
+3. Deduplicate and screen.
+4. Extract experimental evidence.
+5. Synthesize by theme and mechanism.
+6. Cross-check industry / implementation when relevant.
+7. Record gaps and the next research question.
+
+### Finish when
+- Major research routes are represented;
+- load-bearing papers were actually read;
+- alternatives / challenges were checked;
+- evidence conditions are preserved;
+- concrete research gaps remain visible.
+
+Keep steps imperative and keep long paper lists / detailed schemas in repository artifacts rather than in the main workflow.
 
 ## 目标
 
