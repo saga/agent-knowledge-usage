@@ -8,6 +8,7 @@
 - [Reference Index](./reference/README.md)
 - [Academic Papers（56篇）](./学术论文/README.md)
 - [Industry Practice](./业界实践/README.md)
+- [Research Skills](./skills/README.md)
 
 ## Core question
 
