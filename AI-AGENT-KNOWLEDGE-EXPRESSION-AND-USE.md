@@ -2,7 +2,7 @@
 
 > 研究日期：2026-10-02
 > 
-> 主题：Knowledge Representation / Knowledge Fidelity / Knowledge Use
+> 主题：Knowledge Representation / Knowledge Fidelity / Knowledge Use / Dark Knowledge / Tacit Knowledge
 > 
 > 核心问题：如果原始知识是 100%，训练进模型以后还剩多少？RAG、摘要、Graph、Semantic Layer 把知识交给模型时，又损失了多少？
 
@@ -271,6 +271,49 @@ context → model use
 
 这才接近真正的“知识损失”。
 
+### 3.3 Dark Knowledge 提醒我们：正确答案之外还有知识
+
+“知识蒸馏”这个词还有一个容易被忽略的来源：Hinton、Vinyals 和 Dean 在 2015 年提出的 *Distilling the Knowledge in a Neural Network*。
+
+他们指出，一个训练好的模型输出的不只是“正确类别”，还会给其他类别分配概率。即使这些概率非常小，它们之间的相对关系也包含模型学到的泛化结构和相似性。例如，模型把一个输入误认为 A 的概率远高于误认为 B，本身就是知识。Hinton 将这类信息称为 **dark knowledge**，并用高温 soft targets 把这部分信息传给 student。见 Hinton et al. 2015。
+
+这对前面的“知识损失”问题很重要，因为它说明：
+
+~~~
+正确答案
+≠
+模型掌握的全部可用信息
+~~~
+
+更具体地，一个 richer representation 被压成 hard answer，即使“答案完全正确”，也可能丢掉：
+
+- alternative hypotheses；
+- uncertainty；
+- similarity structure；
+- decision boundary information；
+- exception / near-miss information。
+
+所以，一个 summary 如果把一份复杂政策压成：
+
+~~~
+客户满足条件 X，因此批准。
+~~~
+
+它可能保留了当前问题的答案，却把“为什么不是 Y”“哪些条件最容易改变结论”“哪些规则与当前规则相近但不同”等信息一起删掉。
+
+这与 Dark Knowledge 的关系不是说 RAG summary 就等同于 knowledge distillation，而是：
+
+> **知识表达存在“从 richer state 到 hard answer”的有损投影，而且损失的可能不是事实本身，而是事实之间的关系、相似性和不确定性。**
+
+因此 Knowledge Fidelity 不能只问：
+
+> 最终答案对不对？
+
+还应该问：
+
+> **表示转换之后，原来支撑这个答案的结构还有多少？**
+
+需要严格区分：Hinton 所说的 Dark Knowledge 是知识蒸馏中的技术概念，主要指 soft output distribution 中超出 hard label 的信息；它不能直接等同于下面讨论的 Tacit Knowledge，也不能简单用来证明 LLM 参数中存在某种特定类型的“隐性事实库”。
 ---
 
 ## 4. Vector Embedding 也不等于“知识被存成向量”
