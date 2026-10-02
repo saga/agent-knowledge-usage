@@ -10,11 +10,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-URL_RE = re.compile(r"https?://[^\s)\]>"']+")
+URL_RE = re.compile(r'https?://[^\s)\]>"\']+')
 STRONG_RE = re.compile(
     r"(行业标准|最佳实践|普遍|所有|必须|一定|唯一|保证|完全解决|已经解决|"
     r"best practice|industry standard|always|never|guarantee)",
@@ -45,7 +44,6 @@ def urls(text: str) -> list[str]:
 
 def check_one(path: Path, strict: bool) -> dict:
     text = load(path)
-    lower = text.lower()
     headings = heading_text(text)
     all_urls = urls(text)
 
