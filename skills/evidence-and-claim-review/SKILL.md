@@ -1,11 +1,36 @@
 ---
 name: evidence-and-claim-review
-description: 审核研究报告、Roadmap 和架构分析中的事实、引用、推断、行业判断和绝对化结论。当研究结果准备进入长期文档，或用户要求检查结论是否站得住时使用。
+description: 审计已有研究、技术文档和架构结论的证据强度。当用户要求核实、审稿、找证据漏洞、检查引用是否足够、判断一个结论是否说过头时使用；优先审计 load-bearing claims，而不是逐句挑语病。
 metadata:
   kind: capability
 ---
 
 # Evidence and Claim Review
+
+## Skill Operating Contract
+
+### Start with
+- Identify load-bearing claims.
+- Classify each claim.
+- Locate its actual evidence.
+- Check conditions, independence, freshness, and wording.
+
+### Execute
+1. Decompose large claims.
+2. Audit evidence strength.
+3. Search counterevidence for important claims.
+4. Check architectural boundary confusions.
+5. Produce suggested wording or evidence gaps.
+6. Run deterministic checks before semantic review when a script exists.
+
+### Finish when
+- Every load-bearing claim has a status;
+- weak or partial evidence is surfaced;
+- wording matches evidence;
+- unresolved gaps are explicit;
+- the highest-value next research question is clear.
+
+Use concise tables and actionable findings. Do not turn semantic judgment into a mechanical checklist.
 
 ## 目标
 
