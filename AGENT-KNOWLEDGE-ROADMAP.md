@@ -850,12 +850,15 @@ System
 | Eval Layer | 要回答的问题 |
 |---|---|
 | Source | Source 是否正确、完整、最新 |
+| Representation | 转换成 chunk / summary / graph / semantic view 后保留了多少关键结构 |
 | Semantic | 是否使用正式业务定义 |
 | Access | 找到的是否是正确来源 |
 | Authority | 是否选了正确权威来源 |
 | Entitlement | 用户不该看到的是否被过滤 |
 | Evidence | 结论能否回到 source |
 | Context | 是否足够且没有明显噪声 |
+| Behavioral Fidelity | 不依赖文字解释时，Agent 的判断和行为是否仍与知识一致 |
+| Counterfactual Fidelity | 关键条件变化时，Agent 是否产生应该发生的判断变化 |
 | Memory | 是否保存 / 使用了错误记忆 |
 | State | 是否理解当前业务状态 |
 | Agent | 是否完成任务 |
@@ -873,6 +876,12 @@ System
 而是：
 
 > “当正式业务定义存在时，Agent 是否真的使用了它？”
+
+这还需要考虑一个更深的问题：**最终答案可能只是 richer knowledge state 的低带宽投影。**
+
+Hinton 等人在知识蒸馏研究中把 soft output 中超出 hard label 的关系和相对概率称为 dark knowledge；Polanyi 的 tacit knowledge 则说明部分 know-how 难以完整外显。因此 Knowledge Use Evaluation 不能只检查答案文本，还应测试 alternative / uncertainty、例外处理、边界条件以及 counterfactual behavior。
+
+这不是说 Dark Knowledge、Tacit Knowledge 和 Parametric Knowledge 是同一概念，而是它们共同说明：**Answer Correctness 不是 Knowledge Fidelity 的充分指标。**
 
 例如：
 
@@ -1267,6 +1276,10 @@ Business State
 
 Agent 是否真的使用了 retrieved / semantic knowledge，而不是用模型先验回答？
 
+### 5. Behavioral / Counterfactual correctness
+
+当外部知识改变、删除或替换时，Agent 的判断是否发生正确变化？
+
 最后再测：
 
 - task success；
@@ -1274,6 +1287,8 @@ Agent 是否真的使用了 retrieved / semantic knowledge，而不是用模型�
 - recovery；
 - latency；
 - cost。
+
+当前尚无统一的“Knowledge Loss Rate”。更适合研究的是 Knowledge Fidelity 向量：Source Coverage、Representation Fidelity、Retrieval Recall、Context Fidelity、Knowledge Use、Conflict Resolution、Evidence Faithfulness、Behavioral Fidelity。
 
 ---
 
