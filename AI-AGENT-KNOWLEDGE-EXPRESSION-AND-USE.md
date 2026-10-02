@@ -530,6 +530,182 @@ Knowledge Fidelity ≠ 100%
 
 ## 9. 真正缺少的是一个 Knowledge Fidelity 研究体系
 
+
+### 9.1 Tacit Knowledge 提醒我们：并不是所有知识都能先拆成 facts
+
+“知识损失”还有一个更根本的问题：**有些知识本来就很难被完整说出来。**
+
+Michael Polanyi 在 *The Tacit Dimension* 中用一句很著名的话描述这种情况：“we can know more than we can tell”。Wikipedia 对 Tacit Knowledge 的概括也保留了这个核心：它通常指难以提取、难以完整表达和编码的 knowledge，例如经验、intuition、skill、insight 和 know-how；而且 tacit 与 explicit 并不是两个完全割裂的盒子，同一内容对一个人可能是 explicit，对另一个人可能是 tacit。
+
+这会直接改变我们对“100% 原始知识”的定义。
+
+如果原始知识只是：
+
+~~~
+Document
+→
+Facts
+→
+Rules
+~~~
+
+那么我们可以问：
+
+> 保留了多少 propositions？
+
+但如果原始知识包括：
+
+~~~
+Expert skill
++
+pattern recognition
++
+judgment
++
+intuition
++
+context-sensitive know-how
+~~~
+
+那么“100%”本身就不一定是一个可以直接写成文本的集合。
+
+因此：
+
+~~~
+Knowledge Fidelity
+≠
+Text Fidelity
+~~~
+
+甚至：
+
+~~~
+Knowledge Fidelity
+≠
+Proposition Fidelity
+~~~
+
+这不是说 tacit knowledge 无法研究。关键问题变成：
+
+> **它是否能通过行为、决策、例子、反馈和实践被观察和验证？**
+
+这对 Agent 特别重要。一个金融研究员可能说不出自己为什么在第 17 个信号上觉得“这里不对”，但他可以：
+
+- 选择 A 而不是 B；
+- 在某种边界条件下改变判断；
+- 给出反例；
+- 解释哪些异常模式会触发进一步调查。
+
+这些行为本身就是 tacit knowledge 的外显痕迹。
+
+### 9.2 LLM 是否也可能具有某种 Tacit Knowledge？
+
+这个问题已经出现了直接研究。
+
+Céline Budding 在 2025 年发表于 *Philosophy of Science* 的论文中提出，LLM 可以获得一种符合 Martin Davies 定义的 tacit knowledge，并认为 LLM 的一些架构特征满足相关的语义描述、句法结构和因果系统性条件。这个论证属于哲学与认知解释框架，不等于已经证明“LLM 像人一样拥有 Polanyi 意义上的全部 tacit knowledge”。
+
+2025 年另一篇开放获取研究则区分了不同类型的 tacit knowledge，并主张 LLM 可以表现出两类：理论上可以被编码但代价很高的 knowledge，以及语言中的 nuance / subtext；作者不认为当前 LLM 具有通过身体与感官经验获得的 embodied tacit knowledge。
+
+还有一项 2025 年关于组织 tacit knowledge 的 Agent 研究，把“找专家并让专家写文档”换成了另一种思路：Agent 与组织成员持续交互，从分散在人际网络中的碎片知识重建整体知识。在其合成模拟中，作者报告了 94.9% 的 full-knowledge recall。这个结果不能证明真实企业可以达到同样水平，但它提出了一个很重要的方向：
+
+> **Tacit Knowledge 不一定只能“转换成一份文档”，也可以通过多轮交互、观察行为和拼接分散线索逐步重建。**
+
+这和前面提出的 Knowledge Compilation 很接近。
+
+### 9.3 Dark Knowledge 与 Tacit Knowledge 放在一起，得到一个更完整的模型
+
+这两个概念不能混为一谈，但放在一起很有帮助：
+
+| 层次 | 主要含义 | 典型问题 |
+|---|---|---|
+| Explicit Knowledge | 可以直接表达的 facts / rules / documents | 有没有写下来？ |
+| Dark Knowledge | 显式答案之外，隐藏在模型输出分布中的关系、相似性、不确定性 | “正确答案之外还知道什么？” |
+| Tacit Knowledge | 难以完整表达，但可以通过行为、经验和判断表现出来的 know-how | “会不会做、会不会判断？” |
+| Parametric Knowledge | 被模型参数吸收后的知识结构 | “模型内部形成了什么？” |
+| Runtime Context | 当前一次推理实际看到的知识投影 | “这次给模型看了什么？” |
+
+于是最初的问题可以重新写成：
+
+~~~
+Original Knowledge
+      ↓
+what is explicit?
+      ↓
+what is implicit / tacit?
+      ↓
+what gets encoded parametrically?
+      ↓
+what gets projected into context?
+      ↓
+what gets used in reasoning?
+      ↓
+what becomes observable in the answer/action?
+~~~
+
+这比单纯的：
+
+~~~
+Document → RAG → Answer
+~~~
+
+要准确得多。
+
+### 9.4 这也解释了为什么“最终答案”不是一个充分的知识度量
+
+考虑两个模型都输出：
+
+~~~
+Approve
+~~~
+
+它们可能完全不同。
+
+模型 A 可能还保留：
+
+~~~
+Approve
+P(exception) = 0.31
+P(deny) = 0.04
+~~~
+
+模型 B 可能只是输出：
+
+~~~
+Approve
+~~~
+
+模型 A 还可能知道某个例外是最接近的 alternative，并且一旦条件 Y 变化，结论很可能改变。
+
+如果我们只看最终字符串，两者完全一样，但它们携带的知识结构并不一样。
+
+这正是 Dark Knowledge 对“知识损失率”问题最大的补充：
+
+> **正确输出可能只是一个高维知识状态的低带宽投影。**
+
+而 Tacit Knowledge 又进一步告诉我们：
+
+> **有些能力甚至不一定能直接从输出文本中恢复，可能只能通过行为和反事实测试观察。**
+
+所以未来 Knowledge Fidelity Evaluation 不应该只有：
+
+~~~
+Answer Correctness
+~~~
+
+还应该考虑：
+
+~~~
+Answer
++
+Alternative / Uncertainty
++
+Evidence
++
+Counterfactual Behavior
++
+Decision Consistency
+~~~
+
 目前已经有很多局部指标：
 
 - factual knowledge probing；
@@ -1051,6 +1227,7 @@ ContextItem {
 ~~~
 Source
 Semantic
+Representation
 Retrieval
 Context
 Use
@@ -1059,6 +1236,21 @@ Conflict
 Answer
 Action
 ~~~
+
+如果把 Dark / Tacit Knowledge 纳入，还应该增加两类测试：
+
+~~~
+Behavioral Fidelity
+Counterfactual Fidelity
+~~~
+
+因为某些 knowledge 并不会直接出现在答案里。
+
+例如：
+
+> 当关键条件从 X 改成 Y 时，Agent 是否做出知识上应该发生的判断变化？
+
+这类测试比单纯检查“答案里有没有引用某句话”更接近真正的 Knowledge Use。
 
 特别增加：
 
@@ -1342,6 +1534,39 @@ LLM Weights
 
 没有一个单独的 primitive 能解决整个 Knowledge Fidelity Chain。
 
+### 第七，Dark Knowledge 和 Tacit Knowledge 说明“知识”比答案大得多
+
+Dark Knowledge 提醒我们，模型的 rich predictive structure 不会全部出现在 top answer 中；Tacit Knowledge 又提醒我们，某些 know-how 甚至很难完全转换成 propositions。
+
+所以：
+
+~~~
+Answer
+⊂
+Observable Knowledge
+⊂
+Usable Knowledge
+⊂
+Latent / Tacit Structure
+~~~
+
+这个关系不是严格的数学集合定义，而是一个研究模型。
+
+对 Agent 而言，真正需要保护的不是“生成了多少字”，而是：
+
+> **做决定所需要的知识结构，在经过表示、检索、压缩和 context 投影之后，还剩下多少可用能力？**
+
+这也意味着下一阶段的实验不能只比较答案准确率，还应该比较：
+
+- soft alternatives / uncertainty；
+- counterfactual behavior；
+- boundary cases；
+- evidence linkage；
+- exception handling；
+- decision consistency。
+
+---
+
 ### 第六，Agent Knowledge 真正缺的不是另一个 Knowledge Base
 
 更可能缺的是：
@@ -1443,3 +1668,8 @@ Evaluation
 14. FaithfulRAG: Fact-Level Conflict Modeling for Context-Faithful Retrieval-Augmented Generation — https://aclanthology.org/2025.acl-long.1062/
 15. LaRA: Benchmarking Retrieval-Augmented Generation and Long-Context LLMs — https://proceedings.mlr.press/v267/li25dv.html
 16. Thinking to Recall: How Reasoning Unlocks Parametric Knowledge in LLMs — https://arxiv.org/abs/2603.09906
+17. Distilling the Knowledge in a Neural Network — https://arxiv.org/abs/1503.02531
+18. What Do Large Language Models Know? Tacit Knowledge as a Potential Causal-Explanatory Structure — https://doi.org/10.1017/psa.2025.19
+19. Tacit knowledge in large language models — https://link.springer.com/article/10.1007/s11138-025-00710-5
+20. Leveraging Large Language Models for Tacit Knowledge Discovery in Organizational Contexts — https://arxiv.org/abs/2507.03811
+21. Tacit knowledge — Wikipedia — https://en.wikipedia.org/wiki/Tacit_knowledge
