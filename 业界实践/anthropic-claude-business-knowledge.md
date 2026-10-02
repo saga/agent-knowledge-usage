@@ -1,63 +1,76 @@
-# Anthropic / Claude：Skills、MCP、Memory 与 Context Engineering
+# Anthropic / Claude：把知识拆成 Skill、Resource、Memory 和 Context
 
 研究日期：2026-10-02
 
-## 1. 核心路线
+## 先看结论
 
-Anthropic 的思路与 Snowflake、Databricks、Google 最不同：不把所有企业知识都建成一个中央 Knowledge Object，而是把知识拆成不同类型的 external capability。
+Anthropic 的思路和 Snowflake、Databricks、Google 不一样。
 
-```text
+它没有先建立统一的 Enterprise Knowledge Object，而是按知识在 Agent 中承担的职责来拆：
+
+~~~text
 Procedural Knowledge → Skills
 External Resources    → MCP
-Persistent Memory     → Memory Tool / App Storage
+Persistent Memory     → application-owned memory
 Current Context       → Context Engineering
 Fresh Web Knowledge   → Web Search
-```
+~~~
 
-参考：
+官方资料：
 - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+- https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 - https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
 - https://docs.anthropic.com/en/docs/build-with-claude/memory
 - https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview
 - https://docs.anthropic.com/en/docs/build-with-claude/context-editing
 
-## 2. Business Knowledge 的核心抽象：Skill
+## 1. Skill 是 Procedural Knowledge
 
-Anthropic 对 Skill 的定义非常值得注意：Skill 是一个包含 instructions、scripts、resources 的可复用能力包。
+Skill 的基本结构是目录：
 
-典型结构：
-
-```text
+~~~text
 skill/
 ├── SKILL.md
 ├── references/
 ├── scripts/
 └── templates/
-```
+~~~
 
-它表达的是“如何把一类工作做好”，而不是“世界上有哪些事实”。
+它表达的不是世界上有哪些事实，而是“一类工作应该怎么做”。
 
-## 3. Progressive Disclosure
+所以可以稳定地区分：
 
-Claude 不会启动时把所有 Skill 全塞进 context。
+~~~text
+Knowledge = what
+Skill = how
+Tool = capability
+~~~
 
-```text
-1. metadata
-   ↓
-2. SKILL.md
-   ↓
-3. referenced files
-   ↓
-4. scripts / resources
-```
+## 2. Progressive Disclosure 其实是在管理 Context
 
-这意味着 Knowledge 的“存在”和 Knowledge 的“进入 context”是两个不同问题。
+Anthropic 的 Skills 设计不是启动时把所有技能全文塞进模型，而是：
 
-## 4. MCP：把外部业务知识变成 Resource / Tool
+~~~text
+metadata
+  ↓
+SKILL.md
+  ↓
+reference files
+  ↓
+scripts / resources
+~~~
 
-MCP 可以暴露 tools、resources、prompts。Resource 可以承载 documentation、data、files、application state 和其他 contextual material。
+官方 best practices 还明确建议控制 SKILL.md 的规模，把大型参考资料拆出去。
 
-```text
+背后的原因不是文件结构漂亮，而是 Skill 本身就是 context cost。
+
+如果有几十个 Skill，全量常驻 prompt，Agent 很快就会失去上下文预算。
+
+## 3. MCP 和 Skill 是不同层
+
+MCP 更像 external interface：
+
+~~~text
 Claude
   ↓
 MCP
@@ -66,130 +79,118 @@ MCP
   └── Prompt
   ↓
 Enterprise System
-```
+~~~
 
-这一模式适合 Jira、SharePoint、Databases、internal APIs、knowledge repositories 和 SaaS systems。
+Skill 则告诉 Agent 什么时候应该使用哪些资源、怎样完成工作。
 
-## 5. Memory：与 Knowledge 有意分开
+因此组合方式是：
 
-Anthropic 当前 Memory Tool 的重要设计是：memory storage 在 application side，由开发者控制。
+~~~text
+Skill
+  ↓
+知道怎么做
+  ↓
+MCP
+  ↓
+拿到真实数据 / 执行操作
+~~~
 
-Claude 只请求 view / create / update / delete 等 memory operation；应用负责把这些操作落到 filesystem、database、cloud storage 或 encrypted store。
+## 4. Memory 为什么由应用拥有
 
-因此 Memory 是 external state，而不是模型自己的 hidden memory。
+Anthropic 当前 memory 的设计把实际存储责任留给 application。
 
-对于 long-running agent，memory 可以与 context editing、compaction 组合使用：compaction 压缩旧对话，memory 保存需要跨压缩继续存在的信息。
+模型请求 memory operation，应用再决定将其写到 filesystem、database、cloud storage 或 encrypted store。
 
-## 6. Context Engineering
+这样 memory 的生命周期、权限、删除、retention 和 backup 都可以由应用治理。
 
-Anthropic 把 context 当成有限资源。
+对于企业系统，这比“模型自己记住了什么”的黑盒方案更容易控制。
 
-当前相关能力包括：
-- tool-result clearing
-- thinking-block clearing
-- server-side compaction
-- client-side compaction
-- just-in-time loading
-- progressive disclosure
+## 5. Context Engineering 是独立的一层
 
-核心思想：
-
-```text
-Full Knowledge
-     ↓
-select / load
-     ↓
-active context
-```
-
-而不是把全部知识永久放进 system prompt。
-
-## 7. Fresh knowledge
-
-Claude 还可以通过 web search、MCP connector 获取外部实时信息。新版 web search 支持动态过滤：搜索后先由 code execution 过滤，再把更相关的结果送入模型 context。
-
-这实际上又形成了 retrieval → context optimization 的组合。
-
-## 8. Anthropic 的 Knowledge 哲学
-
-可以概括为：
-
-> 不要建立一个巨大 Knowledge Blob；建立一组可以按需发现、加载和调用的 external cognitive resources。
+Anthropic 近期实践把 memory、compaction、tool-result clearing 和 just-in-time loading 放到 context management 中。
 
 因此：
 
-```text
-Knowledge
-  ├── Skill
-  ├── Resource
-  ├── Memory
-  ├── Tool
-  └── Current Context
-```
+~~~text
+Knowledge exists
+       ≠
+Knowledge belongs in current context
+~~~
 
-各自承担不同职责。
+Agent 每一步真正需要的是一个 context projection。
 
-## 9. 对你的架构的启发
+## 6. 它和 Snowflake / Databricks 解决的问题不同
 
-### 9.1 Skill 与 Knowledge 必须分离
+可以粗略理解：
 
-```text
-Knowledge = what
-Skill     = how
-Tool      = capability
-```
+~~~text
+Snowflake / Databricks / Google
+    先解决 business semantics
 
-这非常适合 `common-agent-lib` / `team-member-copilot-agent` 当前方向。
+Anthropic
+    先解决 agent capability externalization
+~~~
 
-### 9.2 Knowledge 不一定需要集中式 Knowledge Base
+因此企业系统真正可能采用的组合是：
 
-企业知识可能天然属于 Git repo、Jira、Snowflake、SharePoint、Confluence、internal API、file system。
-
-Agent 可以通过 MCP / connector just in time 获取，而不必先复制成新的中心化知识库。
-
-### 9.3 Memory 应该由应用拥有
-
-对于 Team Agent / Member Memory，更适合：
-
-```text
-Agent
-  ↓
-Memory interface
-  ↓
-Governed storage
-```
-
-而不是一个不可控的黑盒 memory database。
-
-### 9.4 Context Engineering 应该成为 Common Layer
-
-无论知识来自哪里：
-
-```text
-Skill
-Knowledge
-Memory
-State
-Tool Result
-Evidence
-```
-
-最终都需要进入模型 context。
-
-因此通用抽象应是：
-
-> Context Assembly / Context Policy
-
-## 10. 局限
-
-Anthropic 模式非常适合通用 Agent，但没有像 Snowflake、Databricks 那样提供完整 enterprise business ontology / semantic layer。
-
-金融服务场景仍然需要：
-
-```text
+~~~text
 Enterprise Semantic Layer
         +
-Claude Agent Harness
-```
+Knowledge Retrieval
+        +
+Skills
+        +
+MCP
+        +
+Memory
+        +
+Agent Harness
+~~~
 
-两者结合，而不是让 Claude 自己猜企业业务定义。
+而不是要求一个产品把全部问题解决。
+
+## 7. 一个值得直接吸收的设计
+
+Anthropic 把 SKILL.md 作为入口，详细知识放进 references，确定性操作放进 scripts。
+
+这个模式也适用于当前研究库的 Skill：
+
+~~~text
+metadata
+  ↓
+SKILL.md
+  ↓
+reference material
+  ↓
+deterministic script
+~~~
+
+这样研究方法和研究资料不会混成一个巨大 prompt。
+
+## 8. Skill 不能承担 Security Boundary
+
+例如 Skill 写“执行交易前检查 suitability”，不代表系统真的 enforce 了这一点。
+
+真正的控制仍然应该在：
+
+~~~text
+Policy
++
+Authorization
++
+Domain Validation
++
+Command Service
+~~~
+
+Skill 只是 procedural guidance。
+
+## 9. 最终判断
+
+Anthropic 的路线提醒我们：
+
+> Knowledge 不一定要成为一个统一的大 Knowledge Store。
+
+事实、程序、外部数据、记忆和当前上下文，可以拥有不同的存储方式和生命周期。
+
+对 Common Agent Library，真正值得统一的是这些能力的 contract，而不是强迫它们使用同一种 Knowledge backend。
