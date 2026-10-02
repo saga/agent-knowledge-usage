@@ -1,11 +1,35 @@
 ---
 name: knowledge-synthesis
-description: 把论文、厂商实践、开源实现和已有研究材料综合成 Knowledge Architecture、Roadmap、分类体系或设计原则。适用于研究结果已经足够多、需要抽象共同模式时。
+description: 把论文、厂商实践、开源实现和已有研究综合成跨来源的架构模式与候选 primitive。当用户要求抽象共性、形成统一模型、指导 Common Library、形成 roadmap 时使用；先验证责任边界，再决定是否值得抽象。
 metadata:
   kind: capability
 ---
 
 # Knowledge Synthesis
+
+## Skill Operating Contract
+
+### Start with
+- Define the abstraction question.
+- Freeze scope and evidence floor.
+- Separate vendor facts from repository inference.
+
+### Execute
+1. Normalize sources into common dimensions.
+2. Cluster by responsibility, not product name.
+3. Record tensions and exceptions.
+4. Validate patterns across independent sources.
+5. Create a primitive card only for stable patterns.
+6. Map each candidate to Adopt / Adapt / Observe / Reject.
+
+### Finish when
+- The common mechanism is explicit;
+- real differences remain visible;
+- each candidate primitive has a responsibility boundary;
+- evidence gaps are recorded;
+- the roadmap does not depend on a single vendor implementation.
+
+Prefer the smallest abstraction that solves a real cross-provider problem.
 
 ## 目标
 
