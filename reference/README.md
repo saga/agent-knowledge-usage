@@ -42,6 +42,10 @@ Snowflake → Google Open Knowledge Format → LLM Wiki → Graph → Semantic L
 
 ## Agent Cognition / Skills / Memory
 
+## Engineering Practice Feedback
+
+- [agentic-data-architect 长任务实践反馈（2026-10）](./saga-agentic-data-architect-practice-2026-10.md)：从真实 Data Architecture Agent 实现中记录 checkpoint、live state、human wait 与 reasoning 的边界。
+
 - [ReAct - ICLR 2023](./react-2023.md)：reasoning 与 acting 的基本循环。
 - [Toolformer - 2023](./toolformer-2023.md)：模型如何学习什么时候调用工具。
 - [CoALA - 2024](./coala-2024.md)：把 memory、action、environment interaction 放进统一 cognitive architecture。
