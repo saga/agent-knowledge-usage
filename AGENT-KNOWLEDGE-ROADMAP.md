@@ -2,7 +2,7 @@
 
 > 目的：从理论、业界实践和架构战略层面理解并指导一系列 AI Agent 应用、Common Library、Team Agent、Data Agent、Research Agent 和金融服务 Agent 的共同基础。重点不是再做一个 RAG 框架，而是定义 Agent 如何可靠消费企业知识、业务语义、记忆、能力、状态、证据和权限。
 >
-> 研究日期：2026-10-02
+> 研究日期：2026-10-05
 >
 > 当前阶段判断：从“Knowledge 组件研究”进入“Knowledge Access + Semantic + Governance”基础设施设计阶段。
 
@@ -1939,3 +1939,64 @@ Policy 是边界。
 Business State 是业务事实。
 
 Common Agent Library 真正应该统一的是这些责任边界和 access contracts，而不是统一所有底层技术。
+
+# 10. 来自实际 Agent 应用的验证反馈
+
+2026-10-05 对 agentic-data-architect 的实际实现补充了一组很具体的边界。它们目前应视为工程案例，而不是行业定论。
+
+## 10.1 长任务需要区分状态、进度和成果
+
+```text
+Live execution state
+        ↓
+Progress events
+        ↓
+Checkpoint / intermediate work product
+        ↓
+Final result
+```
+
+heartbeat 或 tool event 只能说明系统还在工作。checkpoint 才能表达“这一阶段已经知道了什么”。
+
+因此 Knowledge Projection 不能只研究最终 prompt context，也要研究调查过程中如何形成可复用的中间工作认知。
+
+但 checkpoint 不是 Canonical Knowledge，也不是新的 Evidence Store。它应该能够回到已有 Evidence / Source。
+
+## 10.2 Live state 不应该从历史 trace 反推
+
+实际系统把历史 trajectory 与进程内 active turn 分开：
+
+```text
+Historical trace ≠ Live execution state
+```
+
+这与 Knowledge / Memory / State 的生命周期划分一致：已经发生过的记录、现在发生的事情、下一次模型调用需要看的 context 不是同一个对象。
+
+## 10.3 Human wait 不是 execution
+
+用户输入、权限等待和 Agent 自身执行应该使用不同的状态与时间预算。
+
+```text
+execution budget != human wait budget
+```
+
+这意味着长期 Agent 的 state machine 研究不能只用 running / completed 两个状态，也不能让一个总 timeout 覆盖所有等待类型。
+
+## 10.4 Reasoning stream 是运行时投影，不是知识资产
+
+用户可见的 reasoning 可以改善运行过程的可解释性，但它与 Evidence、Knowledge、Memory 的生命周期不同。
+
+目前工程实践选择把 reasoning 当作 ephemeral runtime signal，而不是自动写入 durable knowledge。
+
+## 10.5 对研究路线的调整
+
+因此下一阶段研究应继续区分：
+
+- Knowledge：长期、可复用、需要 provenance / authority 的信息；
+- Context：本轮推理真正看到的信息；
+- Working state：当前 Investigation 的阶段状态；
+- Checkpoint：阶段形成的可读工作成果；
+- Trace：运行过程记录；
+- Reasoning stream：短生命周期的运行时展示。
+
+这些对象可以互相引用，但不应该因为都与“Agent 知道什么”有关，就合并成一个统一 Knowledge 对象。
