@@ -21,6 +21,11 @@ Source → Canonical Knowledge → Derived Views / Ontology / Graph / Retrieval 
 
 当前新增研究方向：
 
-Source → Representation → Knowledge Access → Knowledge Projection → Knowledge Use → Evidence / Action
+Source → Representation → Knowledge Access → Knowledge Projection → Knowledge Use → Evidence / Action / Checkpoint
 
 重点研究的不再只是“知识放在哪里”，而是知识经过不同表示、访问和上下文投影后，哪些被保留、哪些被丢失，以及 Agent 是否真正使用了它。
+
+
+## 最新工程实践反馈
+
+- [agentic-data-architect 长任务实践反馈（2026-10）](./reference/saga-agentic-data-architect-practice-2026-10.md)：记录长任务 checkpoint、live execution state、人工等待和 reasoning 的实际工程边界。
